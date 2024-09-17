@@ -178,7 +178,7 @@ const Products = ({ account, balance, web3, initializeWeb3 }: MyProps) => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {products.map((product) => (
                 <div key={product.id} className="bg-blue-950 shadow-lg rounded-lg p-6 flex flex-col justify-between hover:shadow-2xl transition-shadow">
-                  <img src={getImage(product.productImage)} alt={product.name} className="w-full h-64 object-cover rounded-md mb-4" />
+                  <img src={getImage(product.productImage)} alt={product.name} onError={(e) => e.currentTarget.src = '/logo512.png'}  className="w-full h-64 object-cover rounded-md mb-4" />
                   <div>
                     <h2 className="text-2xl font-bold mb-2">{product.name}</h2>
                     <p className="text-gray-600 mb-2">Price: {formatUsd(product.price)} mUSDT</p>
