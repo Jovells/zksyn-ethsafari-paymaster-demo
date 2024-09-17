@@ -38,15 +38,15 @@ const Landing = ({ account, balance, web3, initializeWeb3, fetchBalance }: MyPro
   };
 
   return (
-    <div className="min-h-screen  text-white flex flex-col items-center justify-center space-y-12">
+    <div className="min-h-screen   text-white flex flex-col items-center justify-center space-y-12">
       <header className="text-center">
-        <h1 className="text-5xl font-extrabold text-white mb-4">zkSync Ethsafari Hackathon Demo By Jovells</h1>
-        <p className="text-xl text-gray-300">
+       <div> <h1 className="text-5xl font-extrabold text-white mb-4">zkSync Paymaster Demo </h1> <Link className="text-blue-400 text-xl font-bold  hover:text-blue-600 transition ease-in-out duration-300" to={"https://github.com/jovells"}> By Jovells</Link></div>
+        <p className="text-xl mt-3 text-gray-300">
           Seamless transactions with zkSync. Mint stablecoins, view your balance, and explore the marketplace.
         </p>
       </header>
 
-      <main className="w-full max-w-lg bg-black bg-opacity-60 rounded-xl p-8 shadow-lg text-center space-y-6">
+      <main className="w-full max-w-lg bg-black bg-opacity-60 px-32 rounded-xl py-16 shadow-lg text-center space-y-6">
         {/* Step 1: Mint mUSDT */}
         <section className="space-y-4">
           <h2 className="text-3xl font-semibold text-white">Step 1: Mint mUSDT</h2>

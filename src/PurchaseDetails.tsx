@@ -121,6 +121,7 @@ const PurchaseDetails = ({ account, balance, web3, initializeWeb3, fetchBalance 
             <img
               src={getImage(state?.product.productImage)}
               alt={state?.product.name}
+              onError={(e) => e.currentTarget.src = '/big.jpg'}
               className="w-28 h-28 object-cover rounded mr-6"
             />
             <div>

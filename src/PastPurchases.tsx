@@ -111,6 +111,7 @@ const PastPurchases = ({ account }: { account: string | null | undefined }) => {
                   <img
                     src={getImage(purchase.product.productImage)}
                     alt={purchase.product.name}
+                    onError={(e) => e.currentTarget.src = '/big.jpg'}
                     className="w-12 h-12 object-cover rounded-lg"
                   />
                   <span className="font-semibold">{purchase.product.name}</span>
