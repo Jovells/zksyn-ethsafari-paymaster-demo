@@ -137,13 +137,14 @@ const Products = ({ account, balance, web3, initializeWeb3 }: MyProps) => {
       initializeWeb3();
       return;
     }
+    const previousBalances ={musdt: balance, eth: formatUsd(await web3.eth.getBalance(account), "", 18, 6)};
     const id = toast.loading(`Purchasing ${product.name} for ${formatUsd(quantity * product.price)} mUSDT... and paying gas fees with ${gasToken}`);
     try {
       const val = await fn(product, quantity);
       if (!val) return;
       const { tx } = val;
       toast.success(`Successfully purchased ${product.name}. Gas paid: ${tx.gasUsed} ETH`, { id });
-      navigate('/purchase-details', { state: { product, tx } });
+      navigate('/purchase-details', { state: { product, tx , previousBalances} });
     } catch (error) {
       toast.error('Error purchasing product' + error, { id });
     }
