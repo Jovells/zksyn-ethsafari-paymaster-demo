@@ -105,63 +105,90 @@ const PurchaseDetails = ({ account, balance, web3, initializeWeb3, fetchBalance 
   }, []);
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold mb-8">Purchase Details</h1>
+    <div className="max-w-4xl mx-auto px-6 py-8 bg-gray-900 text-white rounded-lg shadow-lg">
+      <h1 className="text-4xl font-bold mb-6 text-center">Purchase Details</h1>
 
-      {isLoading && <p className="text-center text-gray-600">Loading purchase details...</p>}
+      {isLoading && <p className="text-center text-gray-400">Loading purchase details...</p>}
 
       {!isLoading && purchases.length === 0 && (
-        <p className="text-center text-gray-600">No purchases found for this address.</p>
+        <p className="text-center text-gray-400">No purchases found for this address.</p>
       )}
 
       {!isLoading && purchases.length > 0 && (
-        <div key={purchases[0].id} className="card mb-8">
-          <div className="flex items-center mb-4">
+        <div key={purchases[0].id} className="bg-violet-950 rounded-lg shadow-md p-6 mb-8">
+          {/* Product Information */}
+          <div className="flex items-center mb-6">
             <img
               src={getImage(state?.product.productImage)}
               alt={state?.product.name}
-              className="w-24 h-24 object-cover rounded mr-4"
+              className="w-28 h-28 object-cover rounded mr-6"
             />
             <div>
-              <h2 className="text-xl font-semibold">{purchases[0].product.name}</h2>
-              <p className="text-gray-600">Price: {formatUsd(state?.product.price)} mUSDT</p>
-              <p className="text-gray-600">Quantity: {state?.quantity}</p>
+              <h2 className="text-2xl font-semibold mb-2">{purchases[0].product.name}</h2>
+              <p className="text-lg text-gray-300">Price: {formatUsd(state?.product.price)} mUSDT</p>
+              <p className="text-lg text-gray-300">Quantity: {state?.quantity}</p>
             </div>
           </div>
-          <p className="mb-2">Successfully purchased {purchases[0].product.name}. Funds are held in escrow.</p>
-          <p className="mb-2">
-            Gas Paid: <span className="font-semibold">{state?.gasPaid} ETH</span>
-          </p>
-          <div className="bg-indigo-800 p-4 rounded mb-4">
-            <h3 className="font-semibold mb-2">Balance Changes:</h3>
-            <p>
-              Previous Balances: <span className="font-semibold">ETH: {state.previousBalances.eth} | mUSDT: {state.previousBalances.musdt}</span>
-            </p>
-            <p>
-              New Balances: <span className="font-semibold">ETH: {newBalances.eth} | mUSDT: {newBalances.musdt}</span>
+
+          {/* Transaction Details */}
+          <div className="space-y-4">
+            <p className="text-lg">Successfully purchased <span className="font-semibold">{purchases[0].product.name}</span>. Funds are held in escrow.</p>
+            <p className="text-lg">Gas Paid: <span className="font-semibold">{state?.gasPaid} ETH</span></p>
+
+            {/* Balance Changes Section */}
+            <div className="bg-indigo-900 p-4 rounded-md">
+              <h3 className="text-xl font-semibold mb-2">Balance Changes</h3>
+              <table className="w-full text-left">
+                <thead>
+                  <tr>
+                    <th className="px-2 py-1">Currency</th>
+                    <th className="px-2 py-1">Previous Balance</th>
+                    <th className="px-2 py-1">New Balance</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td className="px-2 py-1">ETH</td>
+                    <td className="px-2 py-1">{state.previousBalances.eth}</td>
+                    <td className="px-2 py-1">{newBalances.eth}</td>
+                  </tr>
+                  <tr>
+                    <td className="px-2 py-1">mUSDT</td>
+                    <td className="px-2 py-1">{state.previousBalances.musdt}</td>
+                    <td className="px-2 py-1">{newBalances.musdt}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            {/* Transaction Hash */}
+            <p className="text-lg">Transaction Hash: <span className="font-mono text-sm">{state?.tx.transactionHash}</span></p>
+
+            {/* Purchase Status */}
+            <p className="text-lg">
+              Purchase Status: <span className="font-semibold">
+                {purchases[0].isDelivered
+                  ? 'Delivered'
+                  : purchases[0].isRefunded
+                  ? 'Refunded'
+                  : purchases[0].isReleased
+                  ? 'Released'
+                  : 'Escrowed'}
+              </span>
             </p>
           </div>
-          <p className="mb-2">
-            Transaction Hash: <span className="font-mono text-sm">{state?.tx.transactionHash}</span>
-          </p>
-          <p className="mb-2">
-            Purchase Status:{' '}
-            <span className="font-semibold">
-              {purchases[0].isDelivered
-                ? 'Delivered'
-                : purchases[0].isRefunded
-                ? 'Refunded'
-                : purchases[0].isReleased
-                ? 'Released'
-                : 'Escrowed'}
-            </span>
-          </p>
         </div>
       )}
 
-      <button onClick={() => navigate('/past-purchases')} className="btn btn-secondary w-full">
-        View Past Purchases
-      </button>
+      {/* CTA Button */}
+      <div className="text-center">
+        <button
+          onClick={() => navigate('/past-purchases')}
+          className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md transition duration-300"
+        >
+          View Past Purchases
+        </button>
+      </div>
     </div>
   );
 };
