@@ -1,46 +1,119 @@
-# Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# zkSync Paymaster Demo
 
-## Available Scripts
+## Overview
 
-In the project directory, you can run:
+This project is a demo application showcasing how to use zkSync's Paymaster feature to make seamless transactions. The app allows users to mint stablecoins (`mUSDT`), view their balance, explore products, and make purchases using `mUSDT` or `ETH`. Users can even pay gas fees with either `ETH` or `mUSDT` using the Paymaster integration.
 
-### `npm start`
+## Features
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+1. **Mint mUSDT**: Easily mint stablecoins (`mUSDT`) to use in transactions.
+2. **Browse Products**: Explore products available for purchase in a decentralized marketplace.
+3. **Purchase Products**: Use either `mUSDT` or `ETH` to buy products and pay gas fees.
+4. **Paymaster Integration**: Option to pay gas fees using `mUSDT` via zkSync’s Paymaster.
+5. **View Purchase History**: Track your past transactions and compare balances before and after purchases.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## Live Demo
 
-### `npm test`
+[zkSync Paymaster Demo](https://github.com/jovells)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Technology Stack
 
-### `npm run build`
+- **React.js**: Frontend framework.
+- **Web3.js**: Ethereum blockchain interaction.
+- **zkSync**: Layer 2 scaling solution with Paymaster support.
+- **Solidity**: Smart contract interactions (via zkSync).
+- **TailwindCSS**: For styling the user interface.
+- **MetaMask**: Ethereum wallet integration.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Steps to Use the Application
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Step 1: Mint mUSDT
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Mint stablecoins that you will use for purchases within the application.
 
-### `npm run eject`
+- Click the "Mint mUSDT" button to generate some mUSDT.
+- After minting, your wallet's balance will automatically update.
+- You will need this balance to make purchases on the marketplace.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+### Step 2: Explore the Products Page
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Browse the available products for sale. These items can be purchased using your minted mUSDT.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+- Click the "Explore Products" button to go to the marketplace.
+- Products are fetched and displayed based on the selected planet.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+### Step 3: Buy a Product
 
-## Learn More
+Select any product you want to purchase.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- Choose whether to pay gas fees using `ETH` or `mUSDT` (via zkSync’s Paymaster).
+- Confirm the transaction to complete your purchase.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Step 4: View Purchase History
+
+After making a purchase, view the details of your transaction, including the gas fees paid and the method used for payment (ETH or mUSDT).
+
+- Go to "Purchase History" to review your past purchases and compare the balances before and after each transaction.
+
+## How to Run the Application Locally
+
+### Prerequisites
+
+- **Node.js**: Make sure you have Node.js (v14 or later) and npm installed. [Download Node.js](https://nodejs.org/en/download/)
+- **MetaMask**: Install the MetaMask extension in your browser. [Install MetaMask](https://metamask.io/)
+- **zkSync Wallet Setup**: Configure zkSync network in MetaMask or any compatible wallet.
+
+### Installation
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/your-username/zksync-paymaster-demo.git
+cd zksync-paymaster-demo
+```
+
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+3. Start the development server:
+
+```bash
+npm start
+```
+
+The app will be accessible at `http://localhost:3000/`.
+
+### Commands
+
+- **`npm start`**: Start the development server.
+- **`npm run build`**: Build the app for production.
+- **`npm test`**: Run the test suite.
+- **`npm run lint`**: Lint the codebase.
+
+## Contracts Used
+
+- **mUSDT Contract**: Handles minting and transfers of the mUSDT stablecoin.
+- **Paymaster Contract**: Manages gas fee payments using mUSDT instead of ETH.
+
+Ensure you have deployed and configured the necessary contracts on zkSync or another compatible blockchain network.
+
+## User Interface
+
+### Landing Page
+
+- The landing page welcomes users with clear steps on how to get started.
+- It provides actions to mint stablecoins, explore products, and purchase them.
+  
+### Product Page
+
+- Products are displayed with key details such as price and available quantity.
+- Users can buy items by paying gas fees in either `ETH` or `mUSDT` via the Paymaster.
+
+### Purchase History Page
+
+- Users can view past purchases along with transaction details and compare balances.
+
