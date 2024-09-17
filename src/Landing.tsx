@@ -38,15 +38,34 @@ const Landing = ({ account, balance, web3, initializeWeb3, fetchBalance }: MyPro
   };
 
   return (
-    <div className="min-h-screen   text-white flex flex-col items-center justify-center space-y-12">
+    <div className="min-h-screen text-white flex flex-col items-center justify-center space-y-12">
       <header className="text-center">
-       <div> <h1 className="text-5xl font-extrabold text-white mb-4">zkSync Paymaster Demo </h1> <Link className="text-blue-400 text-xl font-bold  hover:text-blue-600 transition ease-in-out duration-300" to={"https://github.com/jovells"}> By Jovells</Link></div>
+        <div>
+          <h1 className="text-5xl font-extrabold text-white mb-4">Web3js ZkSync Plugin Demo (With Paymaster)</h1>
+          <Link className="text-blue-400 text-xl font-bold hover:text-blue-600 transition ease-in-out duration-300" to="https://github.com/jovells">By Jovells</Link>
+        </div>
         <p className="text-xl mt-3 text-gray-300">
-          Seamless transactions with zkSync. Mint stablecoins, view your balance, and explore the marketplace.
+          Seamless transactions with web3js ZkSync Plugin. Mint stablecoins, view your balance, and buy goods without having to load gas on your wallet.
         </p>
       </header>
 
       <main className="w-full max-w-lg bg-black bg-opacity-60 px-32 rounded-xl py-16 shadow-lg text-center space-y-6">
+        {/* Step 0: Get ETH from zkSync Sepolia Faucet */}
+        <section className="space-y-4">
+          <h2 className="text-3xl font-semibold text-white">Step 0: Get ETH from zkSync Sepolia Faucet</h2>
+          <p className="text-lg text-gray-300">
+            Before starting, you need some ETH to pay for transaction fees. Get ETH from the zkSync Sepolia faucet.
+          </p>
+          <a
+            href="https://docs.zksync.io/ecosystem/network-faucets"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-400 text-xl font-bold hover:text-blue-600 transition ease-in-out duration-300" 
+          >
+            Get ETH from Faucet
+          </a>
+        </section>
+
         {/* Step 1: Mint mUSDT */}
         <section className="space-y-4">
           <h2 className="text-3xl font-semibold text-white">Step 1: Mint mUSDT</h2>
@@ -108,7 +127,7 @@ const Landing = ({ account, balance, web3, initializeWeb3, fetchBalance }: MyPro
       </main>
 
       <footer className="text-center bg-gradient-to-r from-[#1755f4] to-blue-500 text-sm">
-        Powered by zkSync | EthSafari 2024
+        Powered by zkSync Web3js Plugin
       </footer>
     </div>
   );

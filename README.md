@@ -1,5 +1,5 @@
 
-# zkSync Paymaster Demo
+# Web3js zkSync Plugin Demo (With Paymaster)
 
 ## Overview
 
@@ -15,7 +15,7 @@ This project is a demo application showcasing how to use zkSync's Paymaster feat
 
 ## Live Demo
 
-[zkSync Paymaster Demo](https://github.com/jovells)
+[Web3js zkSync Plugin Demo (With Paymaster)](https://paymaster-demo.on-fleek.app)
 
 ## Technology Stack
 
