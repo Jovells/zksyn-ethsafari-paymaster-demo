@@ -56,7 +56,7 @@ const Landing = ({ account, balance, web3, initializeWeb3, fetchBalance }: MyPro
         <p className="text-xl mt-3 text-gray-300">
           Seamless transactions with web3js ZkSync Plugin.
           <br></br>
-           Mint stablecoins, view your balance, and buy goods without having to load gas on your wallet.
+           Buy goods and pay gas fees using stablecoins.
         </p>
       </header>
 
