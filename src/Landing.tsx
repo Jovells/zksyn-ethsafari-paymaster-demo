@@ -39,26 +39,7 @@ const Landing = ({ account, balance, web3, initializeWeb3, fetchBalance }: MyPro
 
   return (
     <div className="min-h-screen text-white flex flex-col items-center justify-center space-y-12">
-      <header className="text-center">
-        <div className='flex flex-col items-center'>
-            <div className='flex items-center mb-6'>
-                <Link to={"https://docs.zksync.io/" } target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition ease-in-out duration-300">
-                <img src="/zksync-logo.png" alt="zkSync Logo" className="rounded-md mx-2 h-12 w-12 hover:scale-110 transition-transform duration-300" />
-                </Link>
-                <span className="font-light text-white"> | </span>
-                <Link to={ "https://docs.web3js.org/"} target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition ease-in-out duration-300">
-                <img src="/web3js-logo.jpg" alt="Web3.js Logo" className="rounded-md h-12 mx-2 w-12 hover:scale-110 transition-transform duration-300" />
-                </Link>
-            </div>
-          <h1 className="text-5xl mb-6 font-extrabold text-white mb-4 text-center">Web3js ZkSync Plugin Demo (With Paymaster)</h1>
-          <Link className="text-blue-400 text-xl font-bold hover:text-blue-600 transition ease-in-out duration-300" to="https://github.com/jovells">By Jovells</Link>
-        </div>
-        <p className="text-xl mt-3 text-gray-300">
-          Seamless transactions with web3js ZkSync Plugin.
-          <br></br>
-           Buy goods and pay gas fees using stablecoins.
-        </p>
-      </header>
+
 
       <main className="w-full max-w-4xl bg-black bg-opacity-60 p-16 rounded-xl  shadow-lg  space-y-6">
         {/* Step 0: Get ETH from zkSync Sepolia Faucet */}
@@ -87,6 +68,10 @@ const Landing = ({ account, balance, web3, initializeWeb3, fetchBalance }: MyPro
           </p>
           <p className="text-lg font-semibold text-white">
             Current Balance: <span className="text-amber-300">{balance} mUSDT</span>
+          </p>
+          <p className="text-lg text-gray-300">
+            mUSDT Address: <Link target="_blank"
+            rel="noopener noreferrer" to="https://sepolia.explorer.zksync.io/address/0xff68f7561562C1F24A317d939B46741F76c4Ef55" className="text-amber-300">0xff68f7561562C1F24A317d939B46741F76c4Ef55</Link>
           </p>
           <button 
             onClick={mintStableCoin} 
@@ -122,6 +107,10 @@ const Landing = ({ account, balance, web3, initializeWeb3, fetchBalance }: MyPro
   <br/>
   2. To make the actual payment.
 </p>
+<p className="text-lg text-gray-300">
+            Products contract address: <Link target="_blank"
+            rel="noopener noreferrer" to="https://sepolia.explorer.zksync.io/address/0xEc969112DB5440c954CB60B4Bbd1159673eeE4C3" className="text-amber-300">0xEc969112DB5440c954CB60B4Bbd1159673eeE4C3</Link>
+          </p>
 
         </section>
 

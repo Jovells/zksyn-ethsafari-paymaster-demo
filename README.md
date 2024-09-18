@@ -26,6 +26,13 @@ This project is a demo application showcasing how to use zkSync's Paymaster feat
 - **TailwindCSS**: For styling the user interface.
 - **MetaMask**: Ethereum wallet integration.
 
+## Contract Addresses
+
+- **mUSDT Contract Address**: `0xff68f7561562C1F24A317d939B46741F76c4Ef55`
+- **Paymaster Contract Address**: `0xfA7Adc05E56893df8ecE1F63E4dB1db7767146f4`
+- **Products Contract Address**: `0xEc969112DB5440c954CB60B4Bbd1159673eeE4C3`
+
+
 ## Steps to Use the Application
 
 ### Step 1: Mint mUSDT

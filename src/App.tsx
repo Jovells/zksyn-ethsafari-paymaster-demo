@@ -192,12 +192,33 @@ function App() {
         )}
 
         <div className="container mx-auto px-6 py-8">
+        <header className="text-center mb-10">
+        <div className='flex flex-col items-center'>
+            <div className='flex items-center mb-6'>
+                <Link to={"https://docs.zksync.io/" } target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition ease-in-out duration-300">
+                <img src="/zksync-logo.png" alt="zkSync Logo" className="rounded-md mx-2 h-12 w-12 hover:scale-110 transition-transform duration-300" />
+                </Link>
+                <span className="font-light text-white"> | </span>
+                <Link to={ "https://docs.web3js.org/"} target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition ease-in-out duration-300">
+                <img src="/web3js-logo.jpg" alt="Web3.js Logo" className="rounded-md h-12 mx-2 w-12 hover:scale-110 transition-transform duration-300" />
+                </Link>
+            </div>
+          <h1 className="text-5xl mb-6 font-extrabold text-white mb-4 text-center">Web3js ZkSync Plugin Demo (With Paymaster)</h1>
+          <Link className="text-blue-400 text-xl font-bold hover:text-blue-600 transition ease-in-out duration-300" to="https://github.com/jovells">By Jovells</Link>
+        </div>
+
+        <p className="text-xl mt-3 text-gray-300">
+          Seamless transactions with web3js ZkSync Plugin.
+          <br></br>
+           Buy goods and pay gas fees using stablecoins.
+        </p>
+      </header>
 
           <Toaster />
-          {pathname === "/" && 
-          <Landing account={account} web3={web3} fetchBalance={fetchBalance} balance={balance} initializeWeb3={initializeWeb3} />}
-          {web3 && account && isCorrectNetwork ? <>
+          {
+          web3 && account && isCorrectNetwork ? <>
           <Routes>
+          <Route path="/" element={ <Landing account={account} web3={web3} fetchBalance={fetchBalance} balance={balance} initializeWeb3={initializeWeb3} />} /> :
             <Route path="/products" element={<Products account={account} web3={web3} fetchBalance={fetchBalance} balance={balance} initializeWeb3={initializeWeb3} />} />
             <Route path="/purchase-details" element={<PurchaseDetails account={account} web3={web3} fetchBalance={fetchBalance} balance={balance} initializeWeb3={initializeWeb3} />} />
             <Route path="/purchase-history" element={<PastPurchases account={account}/>} />
