@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Web3js ZkSync",
+  "name": "Web3js ZkSync Plugin Demo (With Paymaster)",
   "icons": [
     {
       "src": "favicon.ico",

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { THE_GRAPH_URL } from './constants';
-import { formatUsd, getImage } from './utils';
+import { formatCurrency, getImage } from './utils';
 import toast from 'react-hot-toast';
 
 interface Product {
@@ -105,45 +105,50 @@ const PastPurchases = ({ account }: { account: string | null | undefined }) => {
         <div className="divide-y divide-gray-800">
           {!isLoading &&
             purchases.map((purchase: Purchase) => (
-              <div key={purchase.id} className="grid grid-cols-1 md:grid-cols-6 gap-6 py-4 px-6 text-gray-200 items-center bg-gray-800 rounded-lg mb-2">
+                <Link
+                state={{ product: purchase.product , amount: purchase.amount } }
+                to={`/purchase-details?id=${purchase.id}`}
+                key={purchase.id}
+                className="grid grid-cols-1 md:grid-cols-6 gap-6 py-4 px-6 text-gray-200 items-center bg-gray-800 rounded-lg mb-2 hover:bg-gray-700 transition-colors duration-200"
+                >
                 {/* Product Image and Name */}
                 <div className="flex items-center space-x-4">
                   <img
-                    src={getImage(purchase.product.productImage)}
-                    alt={purchase.product.name}
-                    onError={(e) => e.currentTarget.src = '/big.jpg'}
-                    className="w-12 h-12 object-cover rounded-lg"
+                  src={getImage(purchase.product.productImage)}
+                  alt={purchase.product.name}
+                  onError={(e) => e.currentTarget.src = '/big.jpg'}
+                  className="w-12 h-12 object-cover rounded-lg"
                   />
                   <span className="font-semibold">{purchase.product.name}</span>
                 </div>
 
                 {/* Price */}
-                <div className="text-lg font-semibold">{formatUsd(purchase.product.price)} mUSDT</div>
+                <div className="text-lg font-semibold">{formatCurrency(purchase.product.price)} mUSDT</div>
 
                 {/* Quantity */}
                 <div className="text-lg">{purchase.amount}</div>
 
                 {/* Total Price */}
                 <div className="text-lg font-semibold">
-                  {formatUsd((parseFloat(purchase.product.price) * parseFloat(purchase.amount)).toString())} mUSDT
+                  {formatCurrency((parseFloat(purchase.product.price) * parseFloat(purchase.amount)).toString())} mUSDT
                 </div>
 
                 {/* Status */}
                 <div className="mt-2 md:mt-0">
                   <span
-                    className={`inline-block px-3 py-1 rounded-md font-semibold text-sm ${
-                      purchase.isDelivered
-                        ? 'bg-green-500 text-white'
-                        : purchase.isRefunded
-                        ? 'bg-red-500 text-white'
-                        : 'bg-yellow-500 text-white'
-                    }`}
+                  className={`inline-block px-3 py-1 rounded-md font-semibold text-sm ${
+                    purchase.isDelivered
+                    ? 'bg-green-500 text-white'
+                    : purchase.isRefunded
+                    ? 'bg-red-500 text-white'
+                    : 'bg-yellow-500 text-white'
+                  }`}
                   >
-                    {purchase.isDelivered
-                      ? 'Delivered'
-                      : purchase.isRefunded
-                      ? 'Refunded'
-                      : 'Payment Made'}
+                  {purchase.isDelivered
+                    ? 'Delivered'
+                    : purchase.isRefunded
+                    ? 'Refunded'
+                    : 'Payment Made'}
                   </span>
                 </div>
 
@@ -151,7 +156,7 @@ const PastPurchases = ({ account }: { account: string | null | undefined }) => {
                 <div className="text-sm text-gray-400">
                   {new Date(Number(purchase.timestamp) * 1000).toLocaleDateString()}
                 </div>
-              </div>
+                </Link>
             ))}
         </div>
       </div>

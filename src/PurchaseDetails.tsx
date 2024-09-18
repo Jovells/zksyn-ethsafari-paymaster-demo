@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { MUSDT_ADDRESS, THE_GRAPH_URL } from './constants';
-import { formatUsd, getImage } from './utils';
+import { formatCurrency as formatCurrency, getImage } from './utils';
 import stablecoinAbi from './stablecoinAbi';
+import Web3, { TransactionReceipt } from 'web3';
 
 interface Balance {
   eth: string;
@@ -13,9 +14,9 @@ interface Balance {
 interface MyProps {
   account?: string | null;
   balance: string;
-  web3: any;
+  web3: Web3;
   initializeWeb3: () => void;
-  fetchBalance: () => void;
+  fetchBalance: (web3: Web3) => void;
 }
 
 interface Product {
@@ -23,6 +24,7 @@ interface Product {
   id: string;
   name: string;
   price: string;
+  productImage: string;
   seller: string;
   updatedAt: string;
 }
@@ -34,12 +36,13 @@ interface Purchase {
   isDelivered: boolean;
   isRefunded: boolean;
   isReleased: boolean;
-}
+} 
 
-const PurchaseDetails = ({ account, balance, web3, initializeWeb3, fetchBalance }: MyProps) => {
+const PurchaseDetails = ({ account, balance, web3, initializeWeb3 }: MyProps) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { state } = location;
+  const { state, } = location as { state?: { product : Product, previousBalances: { eth: string, musdt: string}, amount: string, gasPaid: string, tx: TransactionReceipt }  };
+  const searchParams = new URLSearchParams(location.search);
   const [purchases, setPurchases] = useState<Purchase[]>([]);
   const [newBalances, setNewBalances] = useState<Balance>({ eth: '0', musdt: '0' });
   const [isLoading, setIsLoading] = useState(false);
@@ -47,6 +50,7 @@ const PurchaseDetails = ({ account, balance, web3, initializeWeb3, fetchBalance 
   // Fetch purchases for the connected user
   async function fetchGraphQL(operationsDoc: string, operationName: string, variables: any) {
     setIsLoading(true);
+    console.log('Fetching purchases...', account, operationsDoc, variables );
     const response = await fetch(THE_GRAPH_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -56,13 +60,17 @@ const PurchaseDetails = ({ account, balance, web3, initializeWeb3, fetchBalance 
     return await response.json();
   }
 
+  const id = searchParams.get('id')
+  console.log('id:', id);
+
   const fetchPurchases = async () => {
     const operation = `
       query Purchases {
-        purchases(where: { buyer: "${location.state?.product.seller}" }) {
+        purchases(where: { ${id? `id : "${id}"` : "" } }, orderDirection: desc, orderBy: id ) {
           id
           isDelivered
           isRefunded
+          amount
           isReleased
           product {
             id
@@ -90,14 +98,21 @@ const PurchaseDetails = ({ account, balance, web3, initializeWeb3, fetchBalance 
   };
 
   useEffect(() => {
-    fetchPurchases();
+    if(!state.product){
+      fetchPurchases();
+    }
   }, []);
-
+  console.log('account:', account);
   async function fetchBalances() {
     const musdt = new web3.eth.Contract(stablecoinAbi, MUSDT_ADDRESS);
-    const ethBalance = await web3.eth.getBalance(account);
+    console.log('musdt:', musdt);
+    //this was causing an eror when reconnecting wallet
     const musdtBalance = await musdt.methods.balanceOf(account).call();
-    setNewBalances({ musdt: formatUsd(musdtBalance, 'mUsdt', 6, 6), eth: formatUsd(ethBalance, 'eth', 18, 6) });
+    console.log('musdtBalance:', musdtBalance);
+    const ethBalance = await web3.eth.getBalance(account);
+    console.log('eth:', musdt);
+    //this was causing an error when reconnecting wallet
+    setNewBalances({ musdt: formatCurrency(musdtBalance, 'mUsdt', 6, 6), eth: formatCurrency(ethBalance, 'eth', 18, 6) });
   }
 
   useEffect(() => {
@@ -113,12 +128,13 @@ const PurchaseDetails = ({ account, balance, web3, initializeWeb3, fetchBalance 
 
       {isLoading && <p className="text-center text-gray-400">Loading purchase details...</p>}
 
-      {!isLoading && purchases.length === 0 && (
+      {!isLoading && purchases.length == 0 && !state.product && (
         <p className="text-center text-gray-400">No purchases found for this address.</p>
       )}
 
-      {!isLoading && purchases.length > 0 && (
-        <div key={purchases[0].id} className="bg-violet-950 rounded-lg shadow-md p-6 mb-8">
+      {((!isLoading && purchases.length > 0) || state.product)  && (
+        console.log('state.tx:', ((!isLoading && purchases.length > 0) || state.product) ),
+        <div key={state?.product?.id || purchases[0]?.id} className="bg-violet-950 rounded-lg shadow-md p-6 mb-8">
           {/* Product Information */}
           <div className="flex items-center mb-6">
             <img
@@ -128,19 +144,19 @@ const PurchaseDetails = ({ account, balance, web3, initializeWeb3, fetchBalance 
               className="w-28 h-28 object-cover rounded mr-6"
             />
             <div>
-              <h2 className="text-2xl font-semibold mb-2">{purchases[0].product.name}</h2>
-              <p className="text-lg text-gray-300">Price: {formatUsd(state?.product.price)} mUSDT</p>
-              <p className="text-lg text-gray-300">Quantity: {state?.quantity}</p>
+              <h2 className="text-2xl font-semibold mb-2">{state?.product.name || purchases[0]?.product.name}</h2>
+              <p className="text-lg text-gray-300">Price: {formatCurrency( state?.product.price || purchases[0].product.price)} mUSDT</p>
+              <p className="text-lg text-gray-300">Quantity: {state?.amount || purchases[0]?.amount}</p>
             </div>
           </div>
 
           {/* Transaction Details */}
           <div className="space-y-4">
-            <p className="text-lg">Successfully purchased <span className="font-semibold">{purchases[0].product.name}</span>. Funds are held in escrow.</p>
-            <p className="text-lg">Gas Paid: <span className="font-semibold">{state?.gasPaid} ETH</span></p>
+            <p className="text-lg">Successfully purchased <span className="font-semibold">{state?.product.name || purchases[0].product.name}</span>. Funds are held in escrow.</p>
+            {state?.gasPaid && <p className="text-lg">Gas Paid: <span className="font-semibold">{state.gasPaid} ETH</span></p>}
 
             {/* Balance Changes Section */}
-            <div className="bg-indigo-900 p-4 rounded-md">
+            {state?.previousBalances && <div className="bg-indigo-900 p-4 rounded-md">
               <h3 className="text-xl font-semibold mb-2">Balance Changes</h3>
               <table className="w-full text-left">
                 <thead>
@@ -153,32 +169,33 @@ const PurchaseDetails = ({ account, balance, web3, initializeWeb3, fetchBalance 
                 <tbody>
                   <tr>
                     <td className="px-2 py-1">ETH</td>
-                    <td className="px-2 py-1">{state.previousBalances.eth}</td>
+                    <td className="px-2 py-1">{state.previousBalances?.eth}</td>
                     <td className="px-2 py-1">{newBalances.eth}</td>
                   </tr>
                   <tr>
                     <td className="px-2 py-1">mUSDT</td>
-                    <td className="px-2 py-1">{state.previousBalances.musdt}</td>
+                    <td className="px-2 py-1">{state.previousBalances?.musdt}</td>
                     <td className="px-2 py-1">{newBalances.musdt}</td>
                   </tr>
                 </tbody>
               </table>
             </div>
-
+}
             {/* Transaction Hash */}
-            <p className="text-lg">Transaction Hash: <span className="font-mono text-sm">{state?.tx.transactionHash}</span></p>
+            {state.tx && <p className="text-lg">Transaction Hash: <span className="font-mono text-sm">{state?.tx.transactionHash}</span></p>}
 
             {/* Purchase Status */}
             <p className="text-lg">
-              Purchase Status: <span className="font-semibold">
-                {purchases[0].isDelivered
-                  ? 'Delivered'
-                  : purchases[0].isRefunded
-                  ? 'Refunded'
-                  : purchases[0].isReleased
-                  ? 'Released'
-                  : 'Escrowed'}
-              </span>
+          Purchase Status: <span className="font-semibold">
+          { state?.product ? "paid" : 
+            purchases[0].isDelivered
+              ? 'Delivered'
+              : purchases[0].isRefunded
+              ? 'Refunded'
+              : purchases[0].isReleased
+              ? 'Released'
+              : 'Paid'}
+          </span>
             </p>
           </div>
         </div>
@@ -187,7 +204,7 @@ const PurchaseDetails = ({ account, balance, web3, initializeWeb3, fetchBalance 
       {/* CTA Button */}
       <div className="text-center">
         <button
-          onClick={() => navigate('/past-purchases')}
+          onClick={() => navigate('/purchase-history')}
           className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md transition duration-300"
         >
           View Past Purchases

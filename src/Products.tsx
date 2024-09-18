@@ -6,7 +6,7 @@ import { THE_GRAPH_URL, MUSDT_PAYMASTER_ADDRESS, DEWORLD_ADDRESS, MUSDT_ADDRESS 
 import usePaymasterAsync from './usePaymasterAsync'; 
 import deworldAbi from './deworldAbi';
 import stablecoinAbi from './stablecoinAbi';
-import { formatUsd, getImage } from './utils';
+import { formatCurrency, getImage } from './utils';
 
 interface Product {
   id: string;
@@ -21,9 +21,9 @@ interface Product {
 interface MyProps  {
   account?: string | null;
   balance: string;
-  web3: Web3 | null;
+  web3: Web3;
   initializeWeb3: () => void;
-  fetchBalance: () => void;
+  fetchBalance: (web3: Web3) => void;
 }
 
 const Products = ({ account, balance, web3, initializeWeb3 }: MyProps) => {
@@ -63,7 +63,7 @@ const Products = ({ account, balance, web3, initializeWeb3 }: MyProps) => {
 
   const operation = `
     query MyQuery {
-      products(where: { planet: "${searchParams.get('id')}" }) {
+      products(where: { planet: "1" }) {
         id
         name
         price
@@ -81,6 +81,7 @@ const Products = ({ account, balance, web3, initializeWeb3 }: MyProps) => {
       console.error(errors);
       return [];
     }
+    console.log('data:', data, operation);
     return data.products;
   }
 
@@ -96,14 +97,19 @@ const Products = ({ account, balance, web3, initializeWeb3 }: MyProps) => {
       return;
     }
     setIsPending(true);
+    const id = toast.loading('Setting Allowance for mUSDT');
     try {
       const contract = new web3.eth.Contract(deworldAbi, DEWORLD_ADDRESS);
       const musdt = new web3.eth.Contract(stablecoinAbi, MUSDT_ADDRESS);
       
       await musdt.methods.approve(DEWORLD_ADDRESS, Number(product.price) * itemQty).send({ from: account });
+      toast.loading('Purchasing Product', { id });
       const tx = await contract.methods.purchaseProduct(product.id, itemQty).send({ from: account });
+      toast.success('Transaction Succesful', { id });
+  
       return { tx, product };
     } catch (error) {
+      throw error
       console.error('Error purchasing product', error);
     } finally {
       setIsPending(false);
@@ -126,6 +132,7 @@ const Products = ({ account, balance, web3, initializeWeb3 }: MyProps) => {
       return { tx, product };
     } catch (error) {
       console.error('Error buying product with Paymaster', error);
+      throw error
     } finally {
       setIsPending(false);
     }
@@ -137,14 +144,14 @@ const Products = ({ account, balance, web3, initializeWeb3 }: MyProps) => {
       initializeWeb3();
       return;
     }
-    const previousBalances ={musdt: balance, eth: formatUsd(await web3.eth.getBalance(account), "", 18, 6)};
-    const id = toast.loading(`Purchasing ${product.name} for ${formatUsd(quantity * product.price)} mUSDT... and paying gas fees with ${gasToken}`);
+    const previousBalances ={musdt: balance, eth: formatCurrency(await web3.eth.getBalance(account), "", 18, 6)};
+    const id = toast.loading(`Purchasing ${product.name} for ${formatCurrency(quantity * product.price)} mUSDT... and paying gas fees with ${gasToken}`);
     try {
       const val = await fn(product, quantity);
       if (!val) return;
       const { tx } = val;
       toast.success(`Successfully purchased ${product.name}. Gas paid: ${tx.gasUsed} ETH`, { id });
-      navigate('/purchase-details', { state: { product, tx , previousBalances} });
+      navigate('/purchase-details', { state: { product, tx , previousBalances, amount: quantity} });
     } catch (error) {
       toast.error('Error purchasing product' + error, { id });
     }
@@ -182,7 +189,7 @@ const Products = ({ account, balance, web3, initializeWeb3 }: MyProps) => {
                   <img src={getImage(product.productImage)} alt={product.name} onError={(e) => e.currentTarget.src = '/big.jpg'}  className="w-full h-64 object-cover rounded-md mb-4" />
                   <div>
                     <h2 className="text-2xl font-bold mb-2">{product.name}</h2>
-                    <p className="text-gray-100 mb-2">Price: {formatUsd(product.price)} mUSDT</p>
+                    <p className="text-gray-100 mb-2">Price: {formatCurrency(product.price)} mUSDT</p>
                     <p className="text-gray-100 mb-4">Available Quantity: {product.quantity - product.sales}</p>
                   </div>
                   <div className="space-y-3">

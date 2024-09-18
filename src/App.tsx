@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
+import { BrowserRouter as Router, Route, Routes, Link, useLocation } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
 import Landing from './Landing';
 import Products from './Products';
 import PurchaseDetails from './PurchaseDetails';
 import Web3 from 'web3';
-import { formatUsd } from './utils';
+import { formatCurrency } from './utils';
 import stablecoinAbi from './stablecoinAbi';
 import { MUSDT_ADDRESS } from './constants';
 import PastPurchases from './PastPurchases';
@@ -21,42 +21,64 @@ declare let window: EthereumWindow;
 function App() {
   const [account, setAccount] = useState<string | null>(null);
   const [isCorrectNetwork, setIsCorrectNetwork] = useState<boolean>(false);
+  const [network, setNetwork] = useState<any>('');
   const [balance, setBalance] = useState("0");
-  const [web3, setWeb3] = useState<Web3 | null>(null);
+  const [web3, setWeb3] = useState<Web3>(null);
+  const [pathname, setPathname] = useState(window.location.pathname)
 
-  useEffect(() => {
-    checkNetwork();
-    if (window.ethereum) {
-      window.ethereum.on('chainChanged', () => {
-        window.location.reload(); // Reload on network change to re-check the network
-      });
+  useLayoutEffect(() => {
+    if(!isCorrectNetwork) {
+      checkAndSetNetwork();
+      return;
     }
+    console.log('Correct:', isCorrectNetwork);
+    toast.success('Connected to zkSync Sepolia!');
+  },[])
+
+
+  useLayoutEffect(() => {
+
     initializeWeb3();
   }, []);
 
   const initializeWeb3 = async () => {
-    if (typeof window.ethereum !== 'undefined') {
-      try {
-        await window.ethereum.request({ method: 'eth_requestAccounts' });
-        const web3 = new Web3(window.ethereum);
-        const accounts = await web3.eth.getAccounts();
-        setAccount(accounts[0]);
-        setWeb3(web3);
-      } catch (error) {
-        toast.error('Please connect your wallet.');
-      }
-    } else {
-      toast.error('Please install MetaMask!');
-    }
+
+ try {
+     if (typeof window.ethereum !== 'undefined') {
+       if (window.ethereum) {
+         window.ethereum.on('chainChanged', (newChain) => {
+           checkAndSetNetwork();
+         });
+       }
+       if(!isCorrectNetwork){
+         console.log("useeffect iscorrrect" ,isCorrectNetwork)
+         return;
+       }
+     
+       try {
+         const web3 = new Web3(window.ethereum);
+         setWeb3(web3);
+       } catch (error) {
+        throw new Error(error)
+         toast.error('Please connect your wallet.');
+       }
+     } else {
+       toast.error('Please install MetaMask!');
+     }
+ } catch (error) {
+  console.log("error initilising web3", error)
+  
+ }
   };
 
   const connectWallet = async (): Promise<void> => {
     if (window.ethereum) {
+      if(!web3){
+        initializeWeb3();
+      }
       try {
-        const web3 = new Web3(window.ethereum);
         const accounts: string[] = await window.ethereum.request({ method: 'eth_requestAccounts' });
         setAccount(accounts[0]);
-        checkNetwork();
       } catch (error) {
         toast.error('Failed to connect wallet.');
       }
@@ -65,17 +87,18 @@ function App() {
     }
   };
 
-  const checkNetwork = async (): Promise<void> => {
+  const checkAndSetNetwork = async (): Promise<boolean> => {
     if (window.ethereum) {
       const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+      setNetwork(chainId);
       if (chainId === ZKSYNC_SEPOLIA_CHAIN_ID) {
         setIsCorrectNetwork(true);
-        toast.success('Connected to zkSync Sepolia!');
+        return true;
       } else {
         setIsCorrectNetwork(false);
-        toast.error('Wrong network. Please switch to zkSync Sepolia.');
+        return false;
       }
-    }
+    }else return false;
   };
 
   const switchNetwork = async (): Promise<void> => {
@@ -84,7 +107,7 @@ function App() {
         method: 'wallet_switchEthereumChain',
         params: [{ chainId: ZKSYNC_SEPOLIA_CHAIN_ID }],
       });
-      checkNetwork();
+      setIsCorrectNetwork(true);
     } catch (switchError: any) {
       if (switchError.code === 4902) {
         try {
@@ -102,7 +125,7 @@ function App() {
               blockExplorerUrls: ['https://sepolia.explorer.zksync.io'], 
             }],
           });
-          checkNetwork();
+          setIsCorrectNetwork(true);
         } catch (error) {
           toast.error('Failed to switch network.');
         }
@@ -111,18 +134,18 @@ function App() {
   };
 
   useEffect(() => {
-    if (account && isCorrectNetwork) {
-      fetchBalance();
+    if (account && web3) {
+      fetchBalance(web3);
     }
   }, [account]);
 
-  const fetchBalance = () => {
-    const web3 = new Web3(window.ethereum);
+  const fetchBalance = (web3:Web3) => {
     const contract = new web3.eth.Contract(stablecoinAbi, MUSDT_ADDRESS);
     contract.methods.balanceOf(account).call().then((balance: any) => {
-      setBalance(formatUsd(balance));
+      setBalance(formatCurrency(balance));
     });
   };
+  console.log('pathname:', pathname, pathname.startsWith('/'));
 
   return (
     <Router>
@@ -132,7 +155,14 @@ function App() {
     }} >
         <nav className="bg-opacity-80 backdrop-blur-md bg-black shadow-md py-3">
           <div className="container mx-auto px-6 flex justify-between items-center">
-            <Link to = {"/"} > <h1 className="text-2xl font-bold text-white">zkSync Demo</h1> </Link>
+            <Link onClick={()=>setPathname("/")} to = {"/"} > <span className="text-l  flex font-bold text-white">
+  
+              Web3js ZkSync Demo</span> </Link>
+            <div className="flex space-x-4">
+              <Link to="/" onClick={()=>setPathname("/")} className={" hover:text-blue-300 transition ease-in-out" + (pathname === "/" ? " text-blue-300" : "text-white")}>Home</Link>
+              <Link to="/products" onClick={()=>setPathname("/products")} className={" hover:text-blue-300 transition ease-in-out" + (pathname.startsWith('/products') ? " text-blue-300" : "text-white")} >Products</Link>
+              <Link to="/purchase-history" onClick={()=>setPathname("/purchase-history")} className={" hover:text-blue-300 transition ease-in-out" + (pathname.startsWith('/purchase-history')? " text-blue-300":"text-white")}> History</Link>
+            </div>
             {!account ? (
               <button 
                 onClick={connectWallet} 
@@ -141,15 +171,14 @@ function App() {
                 Connect Wallet
               </button>
             ) : (
-              <div className="flex items-center space-x-4">
+              <div className="flex flex-col items-center ">
                 <p className="text-sm text-gray-300">Connected: {account.slice(0, 6)}...{account.slice(-4)}</p>
-                <p className="text-sm font-semibold text-blue-400">Balance: {balance} mUSDT</p>
               </div>
             )}
           </div>
         </nav>
 
-        {!isCorrectNetwork && (
+        {!isCorrectNetwork && network && (
           <div className="bg-yellow-200 border-l-4 border-yellow-600 text-yellow-800 p-4 mb-4">
             <p className="font-bold">Wrong Network</p>
             <p>Please switch to zkSync Sepolia network.</p>
@@ -163,13 +192,21 @@ function App() {
         )}
 
         <div className="container mx-auto px-6 py-8">
+
           <Toaster />
+          {pathname === "/" && 
+          <Landing account={account} web3={web3} fetchBalance={fetchBalance} balance={balance} initializeWeb3={initializeWeb3} />}
+          {web3 && account && isCorrectNetwork ? <>
           <Routes>
-            <Route path="/" element={<Landing account={account} web3={web3} fetchBalance={fetchBalance} balance={balance} initializeWeb3={initializeWeb3} />} />
             <Route path="/products" element={<Products account={account} web3={web3} fetchBalance={fetchBalance} balance={balance} initializeWeb3={initializeWeb3} />} />
             <Route path="/purchase-details" element={<PurchaseDetails account={account} web3={web3} fetchBalance={fetchBalance} balance={balance} initializeWeb3={initializeWeb3} />} />
-            <Route path="/past-purchases" element={<PastPurchases account={account}/>} />
+            <Route path="/purchase-history" element={<PastPurchases account={account}/>} />
           </Routes>
+          </>:
+            <div className="flex flex-col h-svh items-center  ">
+              <p className="text-lg bg-blue-950 rounded-md p-2 text-gray-300 mt-10">Please connect your wallet to continue</p>
+            </div>
+          }
         </div>
         </div>
       </div>
