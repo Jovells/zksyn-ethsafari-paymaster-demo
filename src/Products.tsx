@@ -24,9 +24,10 @@ interface MyProps  {
   web3: Web3;
   initializeWeb3: () => void;
   fetchBalance: (web3: Web3) => void;
+  pathSetter: () => void;
 }
 
-const Products = ({ account, balance, web3, initializeWeb3 }: MyProps) => {
+const Products = ({ account, balance, web3, pathSetter, initializeWeb3 }: MyProps) => {
   const [searchParams] = useSearchParams();
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -61,6 +62,10 @@ const Products = ({ account, balance, web3, initializeWeb3 }: MyProps) => {
     return await response.json();
   }
 
+  useEffect(() => {
+    pathSetter()
+  },[])
+
   const operation = `
     query MyQuery {
       products(where: { planet: "1" }) {
@@ -84,6 +89,8 @@ const Products = ({ account, balance, web3, initializeWeb3 }: MyProps) => {
     console.log('data:', data, operation);
     return data.products;
   }
+
+  useEffect(() => {pathSetter()}, []);
 
   useEffect(() => {
     fetchMyQuery()

@@ -228,10 +228,10 @@ function App() {
           {
           web3 && account && isCorrectNetwork ? <>
           <Routes>
-          <Route path="/" element={ <Landing account={account} web3={web3} fetchBalance={fetchBalance} balance={balance} initializeWeb3={initializeWeb3} />} /> :
-            <Route path="/products" element={<Products account={account} web3={web3} fetchBalance={fetchBalance} balance={balance} initializeWeb3={initializeWeb3} />} />
-            <Route path="/purchase-details" element={<PurchaseDetails account={account} web3={web3} fetchBalance={fetchBalance} balance={balance} initializeWeb3={initializeWeb3} />} />
-            <Route path="/purchase-history" element={<PastPurchases account={account}/>} />
+          <Route path="/" element={ <Landing pathSetter={()=>setPathname("/")} account={account}  web3={web3} fetchBalance={fetchBalance} balance={balance} initializeWeb3={initializeWeb3} />} /> :
+            <Route path="/products" element={<Products pathSetter={()=>setPathname("/products")}  account={account} web3={web3} fetchBalance={fetchBalance} balance={balance} initializeWeb3={initializeWeb3} />} />
+            <Route path="/purchase-details" element={<PurchaseDetails pathSetter={()=>setPathname("/purchase-details")}  account={account} web3={web3} fetchBalance={fetchBalance} balance={balance} initializeWeb3={initializeWeb3} />} />
+            <Route path="/purchase-history" element={<PastPurchases pathSetter={()=>setPathname("/purchase-history")}  account={account}/>} />
           </Routes>
           </>:
             <div className="flex flex-col h-svh items-center  ">

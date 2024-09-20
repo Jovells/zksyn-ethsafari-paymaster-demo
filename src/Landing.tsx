@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import toast from 'react-hot-toast';
 import Web3 from 'web3';
 import stablecoinAbi from './stablecoinAbi';
@@ -11,9 +11,10 @@ interface MyProps {
   web3: Web3;
   initializeWeb3: () => void;
   fetchBalance: (web3: Web3) => void;
+  pathSetter: () => void;
 }
 
-const Landing = ({ account, balance, web3, initializeWeb3, fetchBalance }: MyProps) => {
+const Landing = ({ account, balance, web3, initializeWeb3, pathSetter, fetchBalance }: MyProps) => {
   
   const mintStableCoin = async () => {
     if (!web3) {
@@ -36,6 +37,10 @@ const Landing = ({ account, balance, web3, initializeWeb3, fetchBalance }: MyPro
       toast.error('Failed to mint stablecoin');
     }
   };
+
+  useEffect(() =>{
+    pathSetter()
+  })
 
   return (
     <div className="min-h-screen text-white flex flex-col items-center justify-center space-y-12">

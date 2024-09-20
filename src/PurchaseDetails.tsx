@@ -17,6 +17,8 @@ interface MyProps {
   web3: Web3;
   initializeWeb3: () => void;
   fetchBalance: (web3: Web3) => void;
+  pathSetter: () => void;
+
 }
 
 interface Product {
@@ -38,7 +40,7 @@ interface Purchase {
   isReleased: boolean;
 } 
 
-const PurchaseDetails = ({ account, balance, web3, initializeWeb3 }: MyProps) => {
+const PurchaseDetails = ({ account, balance, web3,  initializeWeb3, pathSetter }: MyProps) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { state, } = location as { state?: { product : Product, previousBalances: { eth: string, musdt: string}, amount: string, gasPaid: string, tx: TransactionReceipt }  };
@@ -59,6 +61,12 @@ const PurchaseDetails = ({ account, balance, web3, initializeWeb3 }: MyProps) =>
     setIsLoading(false);
     return await response.json();
   }
+
+  useEffect(() => {
+
+    pathSetter()
+  }
+  , []);
 
   const id = searchParams.get('id')
   console.log('id:', id);

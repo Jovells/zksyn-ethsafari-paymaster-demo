@@ -24,7 +24,7 @@ interface Purchase {
   timestamp: string;
 }
 
-const PastPurchases = ({ account }: { account: string | null | undefined }) => {
+const PastPurchases = ({ account, pathSetter }: { account: string | null | undefined, pathSetter: ()=>void }) => {
   const location = useLocation();
   const [purchases, setPurchases] = useState<Purchase[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -39,6 +39,8 @@ const PastPurchases = ({ account }: { account: string | null | undefined }) => {
     setIsLoading(false);
     return await response.json();
   }
+
+  useEffect(() => {pathSetter()}, []);
 
   const fetchPurchases = async () => {
     console.log('Fetching purchases...', account );
