@@ -202,9 +202,19 @@ function App() {
                 <Link to={ "https://docs.web3js.org/"} target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition ease-in-out duration-300">
                 <img src="/web3js-logo.jpg" alt="Web3.js Logo" className="rounded-md h-12 mx-2 w-12 hover:scale-110 transition-transform duration-300" />
                 </Link>
+                <span className="font-light text-white"> | </span>
+                <Link to={ "https://chainsafe.io//"} target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition ease-in-out duration-300">
+                <img src="/chainsafe-logo.jpg" alt="chainsfafe.js Logo" className="rounded-md h-12 mx-2 w-12 hover:scale-110 transition-transform duration-300" />
+                </Link>
             </div>
           <h1 className="text-5xl mb-6 font-extrabold text-white mb-4 text-center">Web3js ZkSync Plugin Demo (With Paymaster)</h1>
-          <Link className="text-blue-400 text-xl font-bold hover:text-blue-600 transition ease-in-out duration-300" to="https://github.com/jovells">By Jovells</Link>
+            <div className="flex space-x-4 m-2">
+            <Link className="text-blue-400 text-xl font-bold hover:text-blue-600 transition ease-in-out duration-300" to="https://github.com/jovells">By Jovells</Link>
+            <span>|</span>
+              <Link className="text-blue-400 text-lg hover:text-blue-600 transition ease-in-out duration-300" to="https://github.com/jovells">GitHub</Link>
+              <Link className="text-blue-400 text-lg hover:text-blue-600 transition ease-in-out duration-300" to="https://x.com/JovellsAppiah">X</Link>
+              <Link className="text-blue-400 text-lg hover:text-blue-600 transition ease-in-out duration-300" to="https://linkedin.com/in/jovells">LinkedIn</Link>
+            </div>
         </div>
 
         <p className="text-xl mt-3 text-gray-300">

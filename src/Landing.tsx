@@ -130,7 +130,7 @@ const Landing = ({ account, balance, web3, initializeWeb3, fetchBalance }: MyPro
       </main>
 
       <footer className="text-center bg-gradient-to-r from-[#1755f4] to-blue-500 text-sm">
-        Powered by zkSync Web3js Plugin
+        Powered by zkSync Web3js Plugin | Chainsafe
       </footer>
     </div>
   );

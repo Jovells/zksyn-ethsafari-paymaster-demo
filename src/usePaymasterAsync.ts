@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import Web3, { ContractAbi, TransactionReceipt }  from 'web3';
 import React from 'react';
 import { getPaymasterParams, types, Web3ZKsyncL2, ZKsyncPlugin } from 'web3-plugin-zksync';
-import ZkSyncContractPaymasterPlugin from "./plugin";
+import ZkSyncContractPaymasterPlugin from "zksync-web3-contract-paymaster-plugin";
 import { MUSDT_ADDRESS } from './constants';
 import { waitTxByHashConfirmation } from 'web3-plugin-zksync/lib/utils';
 import toast from 'react-hot-toast';

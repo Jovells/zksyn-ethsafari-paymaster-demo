@@ -20,6 +20,7 @@
     "web-vitals": "^2.1.4",
     "web3": "^4.12.1",
     "web3-plugin-zksync": "^1.0.6",
+    "zksync-ethers": "^6.12.1",
     "zksync-web3-contract-paymaster-plugin": "^1.0.6"
   },
   "scripts": {
